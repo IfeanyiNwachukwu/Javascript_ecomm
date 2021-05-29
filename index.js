@@ -20,8 +20,8 @@ app.get('/',(req,res) =>{
 app.post('/',(req,res) => {
     //req.on is similar to an addEventListener but this time it is listening for a data object
     req.on('data', data => {
-        console.log(data.toString('utf8'));
-    })
+        console.log(data);
+    });
     res.send('Account created!!!');
 })
 
