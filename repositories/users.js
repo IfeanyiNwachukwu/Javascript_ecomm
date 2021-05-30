@@ -12,26 +12,39 @@ class UsersRepository{
             fs.writeFileSync(this.Filename, '[]') // If file does not exist, create a file with the same file name
         }
     }
-    getall = async() => {
-        // open the file called this.Filename
-        // Read its contents
-        // parse the contents
-        // Return the parsed data
-        const contents = await fs.promises.readFile(this.Filename,{encoding: 'utf8'});
-        console.log(contents);
+    GetAll = async() => {
+    //     // open the file called this.Filename
+    //     // Read its contents
+    //    const contents = await fs.promises.readFile(this.Filename,{encoding: 'utf8'});
+    //    // parse the contents
+    //     const data = JSON.parse(contents);
+    //       // Return the parsed data
+    //     return data;
+
+       return JSON.parse(await fs.promises.readFile(this.Filename,{encoding: 'utf8'}))
+       
+    }
+
+    Create = async(attrs) => {
+        // load up the most recent file record
+        const records = await this.GetAll();
+        // Add the new record to the existing file record
+        records.push(attrs);
+        //Write the updated 'records' back to this.FileName
+        await this.WriteAll(records);
     }
 
 
-
-
-
-
-
+   async WriteAll(records) {
+        await fs.promises.writeFile(this.Filename, JSON.stringify(records));
+    }
 }
 
 const test = async () => {
     const repo = new UsersRepository('users.json');
-    await repo.getall();
+    await repo.Create({email: 'gambo@yahoo.com',password: 'abcdefgh'});
+    const data = await repo.GetAll();
+    console.log(data);
 
 
 }
