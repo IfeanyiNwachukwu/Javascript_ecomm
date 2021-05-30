@@ -41,11 +41,19 @@ class UserRepository{
             const records = await this.GetAll();
             return records.find(record => record.Id === Id);
         }
+
+        Delete = async(Id) => {
+            // Get all the records
+            const records = await this.GetAll();
+            // filter records and retain only the records without the Id passed
+            const filteredRecords = records.filter(record => record.Id !== Id);
+            // Write the filtered records to our users.json file
+            await this.WriteAll(filteredRecords);
+        }
 }
 
 const Test = async () => {
     const repo = new UserRepository('users.json');
-    const data = await repo.GetOne("445b5980");
-    console.log(data);
+    await repo.Delete("ab90013e");
 }
 Test();
