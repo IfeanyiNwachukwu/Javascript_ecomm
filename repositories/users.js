@@ -1,51 +1,48 @@
 const fs = require('fs');
-class UsersRepository{
+const crypto = require('crypto');
 
-    constructor(filename){
-        if(!filename){
-            throw new Error('Creating a repository requires a filename');
+class UserRepository{
+        constructor(filename){
+            // check if an argument was passed for the parameter filename
+            if(!filename){
+                throw new Error('A filename is needed to create a repository');
+            }
+            this.FileName = filename;
+            try {
+                // check directory if a file with such a file name exists in our directory
+                fs.accessSync(this.FileName);
+            } catch (error) {
+                // if no file with such a filename exists
+                // create one using that same filename
+                fs.writeFileSync(this.FileName,'[]');
+            }
         }
-        this.Filename = filename;
-        try {
-            fs.accessSync(this.Filename); // check if file exists
-        } catch (error) {
-            fs.writeFileSync(this.Filename, '[]') // If file does not exist, create a file with the same file name
+    
+        GetAll = async () => {
+         return await  JSON.parse(await fs.promises.readFile(this.FileName),{encoding:'utf8'}); //encoding which is optional is left out here because the default is utf8 which we want
         }
-    }
-    GetAll = async() => {
-    //     // open the file called this.Filename
-    //     // Read its contents
-    //    const contents = await fs.promises.readFile(this.Filename,{encoding: 'utf8'});
-    //    // parse the contents
-    //     const data = JSON.parse(contents);
-    //       // Return the parsed data
-    //     return data;
+     
+        RandomId = () => {
+            return crypto.randomBytes(4).toString('hex');
+        }
 
-       return JSON.parse(await fs.promises.readFile(this.Filename,{encoding: 'utf8'}))
-       
-    }
+        Create = async(attrs) => {
+            attrs.Id = this.RandomId();
+            const records = await this.GetAll();
+            records.push(attrs);
+            await this.WriteAll(records);
+        }
 
-    Create = async(attrs) => {
-        // load up the most recent file record
-        const records = await this.GetAll();
-        // Add the new record to the existing file record
-        records.push(attrs);
-        //Write the updated 'records' back to this.FileName
-        await this.WriteAll(records);
-    }
-
-
-   async WriteAll(records) {
-        await fs.promises.writeFile(this.Filename, JSON.stringify(records,null,2));
-    }
+        async WriteAll(records) {
+            await fs.promises.writeFile(this.FileName, JSON.stringify(records, null, 2));
+        }
 }
 
-const test = async () => {
-    const repo = new UsersRepository('users.json');
-    await repo.Create({email: 'gambo@yahoo.com',password: 'abcdefgh'});
+const Test = async () => {
+    const repo = new UserRepository('users.json');
+    await repo.Create({email:'gambo@outlook.com', password: 'abc123'});
+    await repo.Create({email:'sacred@outlook.com', password: 'xyz123'});
     const data = await repo.GetAll();
     console.log(data);
-
-
 }
-test();
+Test();
