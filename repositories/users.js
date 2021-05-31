@@ -50,10 +50,43 @@ class UserRepository{
             // Write the filtered records to our users.json file
             await this.WriteAll(filteredRecords);
         }
+
+        Update = async(Id,attrs) => {
+            //Fetch all records
+            const records = await this.GetAll();
+            // Find the record with the Id passed from the fetched records
+            const record = records.find(record => record.Id === Id);
+            // Throw an error if record was not found.
+            if(!record){
+                throw new Error(`user with Id of ${Id} not found`);
+            }
+
+            Object.assign(record,attrs);
+            await this.WriteAll(records);
+        }
+
+        GetOneBy  = async(filters) => {
+            const records = await this.GetAll();
+            for(let record of records){
+                let found = true;
+                for(let key in filters){
+                    if(record[key] !== filters[key]){
+                        found = false;
+                    }
+                }
+                if(found){
+                    return record;
+                }
+            }
+        }
 }
+
 
 const Test = async () => {
     const repo = new UserRepository('users.json');
-    await repo.Delete("ab90013e");
+    const data = await repo.GetOneBy({Id: '0f16cad7'})
+    
+    console.log(data);
 }
 Test();
+// { email: 'jagaban@gmail.com', password: 'jaga123', Id: '0f16cad7' },
