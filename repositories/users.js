@@ -80,13 +80,6 @@ class UserRepository{
             }
         }
 }
+// This is good because we only want one instance of the usersRepository
+module.exports = new UserRepository('users.json');
 
-
-const Test = async () => {
-    const repo = new UserRepository('users.json');
-    const data = await repo.GetOneBy({Id: '0f16cad7'})
-    
-    console.log(data);
-}
-Test();
-// { email: 'jagaban@gmail.com', password: 'jaga123', Id: '0f16cad7' },
