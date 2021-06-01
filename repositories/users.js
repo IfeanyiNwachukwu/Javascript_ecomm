@@ -1,5 +1,7 @@
 const fs = require('fs');
 const crypto = require('crypto');
+const util = require('util');
+const scrypt = util.promisify(crypto.scrypt); // Gives us a version of the scrypt function that returns a promise
 
 class UserRepository{
         constructor(filename){
@@ -28,10 +30,17 @@ class UserRepository{
 
         Create = async(attrs) => {
             attrs.Id = this.RandomId();
+
+            const salt = crypto.randomBytes(8).toString('hex');
+            
+            const buff = scrypt(attrs.password,salt,64);
+            
             const records = await this.GetAll();
-            records.push(attrs);
+            const record = {...attrs,password:`${buff.toString('hex')}.${salt}`}; // take everything in the attrs object and spread it into new object but overwrite the password property
+            records.push(record);
+            
             await this.WriteAll(records);
-            return attrs;
+            return record;
         }
 
         async WriteAll(records) {
@@ -83,4 +92,6 @@ class UserRepository{
 }
 // This is good because we only want one instance of the usersRepository
 module.exports = new UserRepository('users.json');
+
+
 
