@@ -1,1 +1,22 @@
-[]
+[
+  {
+    "email": "ifysmart93@gmail.com",
+    "password": "ceececcce",
+    "passwordConfirmation": "edeefdfef"
+  },
+  {
+    "email": "gambomaikudi@yahoo.com",
+    "password": "abc123",
+    "Id": "e6ee2d7c"
+  },
+  {
+    "email": "gambomai@yahoo.com",
+    "password": "qwe123",
+    "Id": "01cd36a9"
+  },
+  {
+    "email": "mosad@yahoo.com",
+    "password": "abc123",
+    "Id": "5d7ba927"
+  }
+]

@@ -31,6 +31,7 @@ class UserRepository{
             const records = await this.GetAll();
             records.push(attrs);
             await this.WriteAll(records);
+            return attrs;
         }
 
         async WriteAll(records) {
