@@ -1,5 +1,6 @@
+const layout = require('../layout');
 module.exports = () => {
-    return `
+    return layout({content :  `
     <div>
         <form action="" method="POST">
             <input type="email" name="email" id="" placeholder="email">
@@ -8,5 +9,5 @@ module.exports = () => {
         </form>
     </div>
     
-    `
+    `});
 }
