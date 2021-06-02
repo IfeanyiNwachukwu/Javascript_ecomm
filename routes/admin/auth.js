@@ -2,6 +2,7 @@ const express = require('express');
 const usersRepo = require('../../repositories/users');
 const signupTemplate = require('../../views/admin/auth/signup');
 const signinTemplate = require('../../views/admin/auth/signin');
+const {check,validationResult} = require('express-validator');
 
 const router = express.Router();
 
@@ -11,9 +12,12 @@ router.get('/signup',(req,res) =>{
 });
 
 
-router.post('/signup',async (req,res) => {   // to avoid copying and pasting this particular line of code everywhere we have a post request.
+router.post('/signup',[check('email').trim().normalizeEmail().isEmail(),
+check('password').trim().isLength({min:4,max:20}),
+check('passwordConfirmation').trim().isLength({min:4,max:20})],async (req,res) => {   // to avoid copying and pasting this particular line of code everywhere we have a post request.
     //req.on is similar to an addEventListener but this time it is listening for a data object
-    
+    const errors = validationResult(req);
+    console.log(errors);
     const {email,password,passwordConfirmation} = req.body;
     const existingUser = await usersRepo.GetOneBy({email});
     if(existingUser){
