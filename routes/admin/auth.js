@@ -2,6 +2,7 @@ const express = require('express');
 const usersRepo = require('../../repositories/users');
 const signupTemplate = require('../../views/admin/auth/signup');
 const signinTemplate = require('../../views/admin/auth/signin');
+const {requireEmail,requirePassword,requirePasswordConfirmation} = require('./validators')
 const {check,validationResult} = require('express-validator');
 
 const router = express.Router();
@@ -12,22 +13,12 @@ router.get('/signup',(req,res) =>{
 });
 
 
-router.post('/signup',[check('email').trim().normalizeEmail().isEmail(),
-check('password').trim().isLength({min:4,max:20}),
-check('passwordConfirmation').trim().isLength({min:4,max:20})],async (req,res) => {   // to avoid copying and pasting this particular line of code everywhere we have a post request.
+router.post('/signup',[requireEmail,requirePassword,requirePasswordConfirmation
+],async (req,res) => {   // to avoid copying and pasting this particular line of code everywhere we have a post request.
     //req.on is similar to an addEventListener but this time it is listening for a data object
-    const errors = validationResult(req);
-    console.log(errors);
+   
     const {email,password,passwordConfirmation} = req.body;
-    const existingUser = await usersRepo.GetOneBy({email});
-    if(existingUser){
-        res.send('Email in use');
-        return;
-    }
-    if(password !== passwordConfirmation){
-       res.send('passwords must match');
-       return;
-    }
+   
     // Create a user in our user repo to represent this person
     const user = await usersRepo.Create({email,password});
 
@@ -46,23 +37,53 @@ router.get('/signin', (req,res) =>{
     res.send(signinTemplate());
 });
 
-router.post('/signin', async (req,res) => {
-
+router.post('/signin',[
+    check('email')
+        .trim()
+        .normalizeEmail()
+        .isEmail()
+        .withMessage('Email is not valid')
+        .custom(async (email) => {
+            const user = await usersRepo.GetOneBy({ email });
+            if (!user) {
+                throw new Error('This user does not exist');
+            }
+        }),
+        check('password')
+        .trim()
+        .isLength({ min: 4, max: 20 })
+        .withMessage('password must have a minimum of 4 characters and a maximum of 20 characters')
+        .custom(async (password) => {
+            const user = await usersRepo.GetOneBy({ email });
+            const validPassword = await usersRepo.ComparePasswords(user.password, password);
+            if (!validPassword) {
+                throw new Error('password entered is not a valid password');
+            }
+        })
+    ], 
+    async (req,res) => {
+    const errorMessages = validationResult(req);
+    console.log(errorMessages);
     const {email,password} = req.body;
-    const user = await usersRepo.GetOneBy({email});
-    if(!user){
-        res.send('This email does not exist');
+    const userAccount = await usersRepo.GetOneBy({email});
+    if(userAccount ){
+        req.session.userId = userAccount.Id;
+        res.send('You are signed in')
         return;
     }
-    const validPassword = await usersRepo.ComparePasswords(user.password,password)
-    if(!validPassword){
-        res.send('Inalid password');
-        return;
-    }
-
-    req.session.userId = user.Id;
-    res.send('You are signed in')
+    res.send('sign in was unsucessful');
+   
+   
+   
 });
 
 module.exports = router;
+
+function checkSignInPassword() {
+    return ;
+}
+
+function checkSignInEmail() {
+    return ;
+}
 
