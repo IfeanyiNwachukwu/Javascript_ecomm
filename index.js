@@ -5,6 +5,8 @@ const authRouter = require('./routes/admin/auth');
 
 const app = express();
 
+app.use(express.static('public'));
+
 app.use(express.urlencoded({extended:true})); // Global midddleware for parsing req object
 app.use(cookieSession({keys:['lkasldkfjp3jp2ij5p2i35j']}));
 //The keys property is used to encrypt all the information that is stored inside a cookie
