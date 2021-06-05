@@ -33,5 +33,10 @@
     "email": "test6@yahoo.com",
     "password": "20739c8456def8d8ffaf4d5e848f14ab8a4803f7d5575ffd8a22a5c358e5e2e4866ac8aede5ac9373243ff62fc42fe6537920489abe8f5e94da333ad519599ba.2678a9fd78e40767",
     "Id": "4d0cc194"
+  },
+  {
+    "email": "miracle@yandex.ru",
+    "password": "3bd0ec8c81839d912b043172de5ab0bbad7816bf4d930c2d46c3c77ce0fe6c7215124eee8ff06b57beab4b3950ac9d0ef2476b00f3dba919cb44d99456600c95.677a18a7cf7d3114",
+    "Id": "a46bc810"
   }
 ]

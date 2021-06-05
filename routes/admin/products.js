@@ -16,6 +16,7 @@ router.get('/admin/products/new',
 
 router.post('/admin/products/new',[requireTitle,requirePrice],(req,res) => {
     const errors = validationResult(req);
+    console.log(req.body);
     console.log(errors);
     // if(!errors.isEmpty()){
 
