@@ -2,6 +2,7 @@
 const express = require('express');
 const cookieSession = require('cookie-session');
 const authRouter = require('./routes/admin/auth');
+const productsRouter = require('./routes/admin/products');
 
 const app = express();
 
@@ -11,6 +12,7 @@ app.use(express.urlencoded({extended:true})); // Global midddleware for parsing 
 app.use(cookieSession({keys:['lkasldkfjp3jp2ij5p2i35j']}));
 //The keys property is used to encrypt all the information that is stored inside a cookie
 app.use(authRouter);  // available to all parts of our program
+app.use(productsRouter);
 
 
 
