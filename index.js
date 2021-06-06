@@ -1,12 +1,13 @@
 // CREATING A WEB SERVER WITH EXPRESS
 const express = require('express');
 const cookieSession = require('cookie-session');
+
 const authRouter = require('./routes/admin/auth');
 const productsRouter = require('./routes/admin/products');
 
 const app = express();
 
-app.use(express.static('public'));
+app.use(express.static('public')); // exposing this directory to all parts of our app
 
 app.use(express.urlencoded({extended:true})); // Global midddleware for parsing req object
 app.use(cookieSession({keys:['lkasldkfjp3jp2ij5p2i35j']}));

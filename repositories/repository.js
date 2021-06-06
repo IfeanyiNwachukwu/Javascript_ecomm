@@ -21,7 +21,7 @@ module.exports = class Repository{
     }
 
     Create = async(attrs) => {
-        attrs.Id = this.RandomId;
+        attrs.Id = this.RandomId();
         const records = await this.GetAll();
         records.push(attrs);
         await this.WriteAll(records);

@@ -7,7 +7,7 @@ const newProductsTemplate = require('../../views/admin/products/new');
 const {requireTitle,requirePrice} = require('./validators');
 
 const router = express.Router();
-const upload = multer({storage: multer.memoryStorage});
+const upload = multer({storage: multer.memoryStorage()});
 
 
 
@@ -24,12 +24,21 @@ router.get('/admin/products/new',
     res.send(newProductsTemplate({}));
 });
 
-router.post('/admin/products/new',[requireTitle,requirePrice],upload.single('image'),(req,res) => {
+router.post('/admin/products/new',upload.single('image'),[requireTitle,requirePrice],async(req,res) => {
     const errors = validationResult(req);
-   console.log(req.file);
+
+    if(!errors.isEmpty()){
+        return res.send(newProductsTemplate({errors}));
+    }
+    
+    
+    const image = req.file.buffer.toString('base64');
+    const {title,price} = req.body;
+    await productsRepo.Create({title,price,image});
+    
     res.send('submitted');
 })
 
 
-
+//Note Base64 string can safely retain an image as a string
 module.exports = router;
