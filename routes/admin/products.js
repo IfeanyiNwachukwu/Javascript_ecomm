@@ -53,9 +53,28 @@ router.get('/admin/products/:id/edit',requireAuth, async (req,res) => {
    
 });
 
-router.post('/admin/products/:id/edit',requireAuth,async (req,res) => {
-    
+router.post('/admin/products/:id/edit',requireAuth,
+upload.single('image'),
+[requireTitle,requirePrice],
+handleErrors(productsEditTemplate, async (req) => {
+    const product = await productsRepo.GetOne(req.params.id);  // we put this code here because of the req.params.id
+    return {product};
+}),
+async (req,res) => {
+    const changes = req.body;
+    if(req.file){
+        changes.image = req.file.buffer.toString('base64');
+    }
+    try {
+        await productsRepo.Update(req.params.id,changes);
+    } catch (error) {
+        return res.send('could not find item');
+    }
+    res.redirect('/admin/products');
+   
 })
+
+
 
 //Note Base64 string can safely retain an image as a string
 module.exports = router;
