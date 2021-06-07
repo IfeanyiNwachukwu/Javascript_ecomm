@@ -1,13 +1,11 @@
 <form action="" method="post">
-    <input type="text" placeholder="Title" name="title">
-    <input type="text" placeholder="Price" title="price">
-    <input type="file" name="image" id="">
-    <button>submit</button>
+    <input type="text" name="title" value="${product.title}">
+    <input type="text" name="price" value="${product.price}">
+   
+    <button>Submit</button>
 
 </form>
 
 
-<h1 class="title">Products</h1>
 
-
-<div>${product.title}</div>
+<input type="file" name="image" id="">
