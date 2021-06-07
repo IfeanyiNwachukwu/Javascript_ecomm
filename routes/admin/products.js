@@ -21,11 +21,11 @@ router.get('/admin/products',async (req,res) => {
     res.send(productsIndexTemplate({products}));
 });
 
-
-router.get('/admin/products/new',
-(req,res) => {
+router.get('/admin/products/new',(req,res) => {
     res.send(newProductsTemplate({}));
 });
+
+
 
 router.post('/admin/products/new',upload.single('image'),[requireTitle,requirePrice],
 handleErrors(newProductsTemplate),
@@ -35,7 +35,9 @@ handleErrors(newProductsTemplate),
     const {title,price} = req.body;
     await productsRepo.Create({title,price,image});
     
-    res.send('submitted');
+    res.redirect('/admin/products')
+
+
 })
 
 
