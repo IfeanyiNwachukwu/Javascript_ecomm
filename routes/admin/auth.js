@@ -25,6 +25,7 @@ router.post('/signup',[requireEmail,requirePassword,requirePasswordConfirmation
 
     // Store the id of that user inside the users cookie... req.session is a property added by the cookie sessions
     req.session.userId = user.Id;
+    console.log(req.session.userId);
 
     res.redirect('/admin/products')
 })
@@ -46,6 +47,7 @@ router.post('/signin',[requireEmailExists,requireValidpasswordForUser],
     const userAccount = await usersRepo.GetOneBy({email});
     
         req.session.userId = userAccount.Id;
+        console.log(req.session.userId);
         res.redirect('/admin/products');
     
     // res.send('sign in was unsucessful');
