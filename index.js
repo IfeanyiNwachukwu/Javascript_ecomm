@@ -5,6 +5,7 @@ const cookieSession = require('cookie-session');
 const authRouter = require('./routes/admin/auth');
 const adminproductsRouter = require('./routes/admin/products');
 const productsRouter = require('./routes/products');
+const cartsRouter = require('./routes/carts');
 
 
 const app = express();
@@ -17,6 +18,7 @@ app.use(cookieSession({keys:['lkasldkfjp3jp2ij5p2i35j']}));
 app.use(authRouter);  // available to all parts of our program
 app.use(adminproductsRouter);
 app.use(productsRouter);
+app.use(cartsRouter);
 
 
 
