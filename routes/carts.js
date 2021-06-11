@@ -1,46 +1,64 @@
 const express = require('express');
-const cartsRepo = require('../repositories/carts');
-
+const CartsRepository = require('../repositories/carts');
+const productsRepo = require('../repositories/products');
+const cartShowTemplate = require('../views/carts/show');
 const router = express.Router();
 
 // Receive a post request to an add an item to the cart
 
-router.post('/cart/products',async (req,res) => {
-   // Figure out the cart!
-   let cart;
-   if(!req.session.cartId){
-       // We don't have a cart, we need to create one,
-       // and store the cart id on the req.session.cartId property
-       cart = await cartsRepo.Create({items: []});
-       req.session.cartId = cart.Id;
-       
+router.post('/cart/products', async (req,res) => {
 
+    let cart;
+    if(!req.session.cartId){
+        cart = await CartsRepository.Create({items : []});
+        req.session.cartId = cart.Id;
 
-   }
-   else{
-       // We have a cart! Lets get it from the repository
-       cart = await cartsRepo.GetOne(req.session.cartId);
-    //    console.log(`existing cart: ${cart.items}`);
+    }
+    else{
+        cart = await CartsRepository.GetOne(req.session.cartId);
+    }
 
-   }
-   //Either increment quantity for existing propertu
-   const existingItem = cart.items.find(item => item.id === req.body.productId);
-   if(existingItem){
-       //increment quantity and save cart
-       existingItem.quantity++;
-    //    console.log(`existing Item : ${existingItem}`);
-   }
-   else{
-       // add new productId to items array
-       cart.items.push({productID: req.body.productId, quantity: 1});
-   }
-   await cartsRepo.Update(cart.Id,{items: cart.items});
-   //OR add new product to the items array
-   res.send('product added to cart');
-})
+    console.log(req.session.cartId);
+
+    const existingItem =  cart.items.find(item => item.productId == req.body.productId);
+
+    if(existingItem){
+        existingItem.quantity++;
+    }
+    else{
+        cart.items.push({productId : req.body.productId, quantity : 1});
+    }
+    console.log(req.body.productId)
+    await CartsRepository.Update(cart.Id, {items: cart.items});
+    res.send('product added to cart')
+
+});
+
 
 
 // Receive a Get request to show all items in the cart
+router.get('/cart', async (req,res) => {
+    if(!req.session.cartId){
+       return  res.redirect('/');
+    }
+
+    console.log(`session ${req.session.cartId}`);
+    const cart = await CartsRepository.GetOne(req.session.cartId);
+  
+    
+    for (let item of cart.items) {
+        console.log(item);
+        const product = await productsRepo.GetOne(item.productId);
+    
+         item.product = product;  // assigning a new property called product to the object
+      }
+     
+      res.send(cartShowTemplate({ items: cart.items }));
+     
+})
+
+
+
 
 
 // Receive a post request to delete an item from the cart
