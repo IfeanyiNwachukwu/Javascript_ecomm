@@ -30,7 +30,7 @@ router.post('/cart/products', async (req,res) => {
     }
     console.log(req.body.productId)
     await CartsRepository.Update(cart.Id, {items: cart.items});
-    res.send('product added to cart')
+    res.redirect('/cart');
 
 });
 
@@ -47,7 +47,7 @@ router.get('/cart', async (req,res) => {
   
     
     for (let item of cart.items) {
-        console.log(item);
+        
         const product = await productsRepo.GetOne(item.productId);
     
          item.product = product;  // assigning a new property called product to the object
@@ -55,13 +55,23 @@ router.get('/cart', async (req,res) => {
      
       res.send(cartShowTemplate({ items: cart.items }));
      
-})
-
-
-
-
-
+});
 // Receive a post request to delete an item from the cart
+router.post('/cart/products/delete',async (req,res) => {
+   const {itemId} = req.body;
+   const cart = await CartsRepository.GetOne(req.session.cartId)
+
+   const items = cart.items.filter(item => item.productId !== itemId);
+
+   await CartsRepository.Update(req.session.cartId,{items});
+   res.redirect('/cart');
+});
+
+
+
+
+
+
 
 
 
